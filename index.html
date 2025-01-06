@@ -1,82 +1,56 @@
-<!DOCTYPE html>  
-<html lang="en">  
-<head>  
-    <meta charset="UTF-8">  
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
-    <title>WebUI 大模型交互</title>  
-    <script src="https://cdn.tailwindcss.com"></script>  
-</head>  
-<body class="bg-gray-100 min-h-screen flex items-center justify-center">  
-    <div class="w-full max-w-md bg-white shadow-lg rounded-lg p-6">  
-        <h1 class="text-2xl font-bold text-center mb-4">WebUI 大模型交互</h1>  
-        <div id="chat-container" class="space-y-4 max-h-96 overflow-y-auto bg-gray-50 p-4 rounded-lg border">  
-            <div class="text-center text-gray-400">开始对话吧！</div>  
-        </div>  
-        <div class="mt-4 flex">  
-            <input id="user-input" type="text" placeholder="请输入您的问题..." class="flex-1 border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">  
-            <button id="send-btn" class="ml-3 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">发送</button>  
-        </div>  
-    </div>  
 
-    <script>  
-        const chatContainer = document.getElementById('chat-container');  
-        const userInput = document.getElementById('user-input');  
-        const sendBtn = document.getElementById('send-btn');  
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebUI API Integration</title>
+  <script>
+    // Function to send a request to the WebUI API
+    async function sendRequest() {
+      const apiKey = "sk-c1096180f6964955963624ec4b5aaa11"; // Your API key
+      const apiUrl = "http://localhost:3000"; // Replace with your WebUI API endpoint
+      const userInput = document.getElementById("userInput").value;
 
-        // WebUI API 配置  
-        const API_URL = 'http://localhost:3000'; // 替换为 WebUI 提供的 API 地址  
-        const API_KEY = 'sk-c1096180f6964955963624ec4b5aaa11'; // 替换为您的 API Key  
+      // Prepare the request payload
+      const payload = {
+        prompt: userInput,
+        max_tokens: 100, // Adjust as needed
+        temperature: 0.7 // Adjust as needed
+      };
 
-        // 添加消息到聊天窗口  
-        function addMessage(sender, text) {  
-            const messageDiv = document.createElement('div');  
-            messageDiv.className = sender === 'user' ? 'text-right' : 'text-left';  
-            messageDiv.innerHTML = `  
-                <div class="inline-block p-3 rounded-lg ${sender === 'user' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'} shadow-md">  
-                    ${text}  
-                </div>  
-            `;  
-            chatContainer.appendChild(messageDiv);  
-            chatContainer.scrollTop = chatContainer.scrollHeight; // 自动滚动到底部  
-        }  
+      try {
+        // Send the POST request to the WebUI API
+        const response = await fetch(apiUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${apiKey}` // Use the API key for authentication
+          },
+          body: JSON.stringify(payload)
+        });
 
-        // 发送消息  
-        async function sendMessage() {  
-            const userMessage = userInput.value.trim();  
-            if (!userMessage) return;  
-
-            // 显示用户消息  
-            addMessage('user', userMessage);  
-            userInput.value = '';  
-
-            try {  
-                // 调用 WebUI API  
-                const response = await fetch(API_URL, {  
-                    method: 'POST',  
-                    headers: {  
-                        'Content-Type': 'application/json',  
-                        'Authorization': `Bearer ${API_KEY}` // 使用 API Key  
-                    },  
-                    body: JSON.stringify({ message: userMessage }) // 根据 WebUI API 的要求调整请求体  
-                });  
-
-                if (!response.ok) {  
-                    throw new Error('API 请求失败');  
-                }  
-
-                const data = await response.json();  
-                addMessage('ai', data.reply); // 显示大模型的回复  
-            } catch (error) {  
-                console.error('Error:', error);  
-                addMessage('ai', '错误：无法连接到服务器。');  
-            }  
-        }  
-
-        // 绑定事件  
-        sendBtn.addEventListener('click', sendMessage);  
-        userInput.addEventListener('keypress', (e) => {  
-            if (e.key === 'Enter') sendMessage();  
-        });  
-    </script>  
-</body>  
+        // Parse the response
+        if (response.ok) {
+          const data = await response.json();
+          document.getElementById("response").innerText = data.choices[0].text; // Adjust based on API response format
+        } else {
+          document.getElementById("response").innerText = `Error: ${response.status}`;
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        document.getElementById("response").innerText = "An error occurred. Check the console for details.";
+      }
+    }
+  </script>
+</head>
+<body>
+  <h1>WebUI API Integration</h1>
+  <label for="userInput">Enter your prompt:</label>
+  <input type="text" id="userInput" placeholder="Type something..." />
+  <button onclick="sendRequest()">Send</button>
+  <h2>Response:</h2>
+  <pre id="response"></pre>
+</body>
 </html>
+
