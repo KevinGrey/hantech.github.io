@@ -1,108 +1,104 @@
-<!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>瀚界科技风电智能体</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-        <style>
-            /* Custom scrollbar styling */
-            #chat-container::-webkit-scrollbar {
-                width: 8px;
-            }
-            #chat-container::-webkit-scrollbar-thumb {
-                background-color: #1e3a8a; /* Blue-800 */
-                border-radius: 4px;
-            }
-            #chat-container::-webkit-scrollbar-track {
-                background-color: #e5e7eb; /* Gray-200 */
-            }
-        </style>
-    </head>
-    <body class="bg-gradient-to-br from-blue-800 via-blue-700 to-blue-600 min-h-screen flex items-center justify-center text-gray-800">
-        <div class="max-w-3xl w-full bg-white shadow-lg rounded-lg overflow-hidden">
-            <!-- Header -->
-            <div class="bg-gradient-to-r from-blue-900 to-blue-700 text-white p-6 text-center">
-                <h1 class="text-3xl font-bold">瀚界科技风电智能体</h1>
-                <p class="text-sm mt-2">智能化风电解决方案</p>
-            </div>
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <title>瀚界科技风电智能体</title>  
+    <script src="https://cdn.tailwindcss.com"></script>  
+    <style>  
+        /* Custom scrollbar styling */  
+        #chat-container::-webkit-scrollbar {  
+            width: 8px;  
+        }  
+        #chat-container::-webkit-scrollbar-thumb {  
+            background-color: #1e3a8a; /* Blue-800 */  
+            border-radius: 4px;  
+        }  
+        #chat-container::-webkit-scrollbar-track {  
+            background-color: #e5e7eb; /* Gray-200 */  
+        }  
+    </style>  
+</head>  
+<body class="bg-gradient-to-br from-blue-800 via-blue-700 to-blue-600 min-h-screen flex items-center justify-center text-gray-800">  
+    <div class="max-w-3xl w-full bg-white shadow-lg rounded-lg overflow-hidden">  
+        <!-- Header -->  
+        <div class="bg-gradient-to-r from-blue-900 to-blue-700 text-white p-6 text-center">  
+            <h1 class="text-3xl font-bold">瀚界科技风电智能体</h1>  
+            <p class="text-sm mt-2">智能化风电解决方案</p>  
+        </div>  
 
-            <!-- Chat Container -->
-            <div id="chat-container" class="p-6 space-y-4 max-h-[400px] overflow-y-auto bg-gray-50">
-                <!-- Chat messages will appear here -->
-                <div class="text-center text-gray-400">开始对话吧！</div>
-            </div>
+        <!-- Chat Container -->  
+        <div id="chat-container" class="p-6 space-y-4 max-h-[400px] overflow-y-auto bg-gray-50">  
+            <!-- Chat messages will appear here -->  
+            <div class="text-center text-gray-400">开始对话吧！</div>  
+        </div>  
 
-            <!-- Input Section -->
-            <div class="p-4 bg-gray-100 border-t">
-                <div class="flex items-center">
-                    <input id="user-input" type="text" placeholder="请输入您的问题..." class="flex-1 border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-700">
-                    <button id="send-btn" class="ml-3 bg-blue-700 text-white px-6 py-3 rounded-lg hover:bg-blue-800 transition-all">发送</button>
-                </div>
-            </div>
-        </div>
+        <!-- Input Section -->  
+        <div class="p-4 bg-gray-100 border-t">  
+            <div class="flex items-center">  
+                <input id="user-input" type="text" placeholder="请输入您的问题..." class="flex-1 border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-700">  
+                <button id="send-btn" class="ml-3 bg-blue-700 text-white px-6 py-3 rounded-lg hover:bg-blue-800 transition-all">发送</button>  
+            </div>  
+        </div>  
+    </div>  
 
-        <script>
-            const chatContainer = document.getElementById('chat-container');
-            const userInput = document.getElementById('user-input');
-            const sendBtn = document.getElementById('send-btn');
+    <script>  
+        const chatContainer = document.getElementById('chat-container');  
+        const userInput = document.getElementById('user-input');  
+        const sendBtn = document.getElementById('send-btn');  
 
-            // Your local API configuration
-            const API_URL = 'http://localhost:8080'; // 本地大模型 API 地址
-            const API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImIzYmE0Y2YzLTljY2UtNGYxMy05OThlLTA1NGVkZWUyY2E4NSJ9.JwcBUCBaFGRwQC9FROphwCyAvVM7eLVSRGNXbgI2NLc'; // 替换为你的 API 密钥
+        // 后端代理地址  
+        const API_PROXY_URL = 'http://localhost:3000/api/chat';  
 
-            // Function to add a message to the chat
-            function addMessage(sender, text) {
-                const messageDiv = document.createElement('div');
-                messageDiv.className = sender === 'user' ? 'text-right' : 'text-left';
-                messageDiv.innerHTML = `
-                    <div class="inline-block p-3 rounded-lg ${sender === 'user' ? 'bg-blue-700 text-white' : 'bg-gray-200 text-gray-800'} shadow-md">
-                        ${text}
-                    </div>
-                `;
-                chatContainer.appendChild(messageDiv);
-                chatContainer.scrollTop = chatContainer.scrollHeight; // Auto-scroll to the bottom
-            }
+        // Function to add a message to the chat  
+        function addMessage(sender, text) {  
+            const messageDiv = document.createElement('div');  
+            messageDiv.className = sender === 'user' ? 'text-right' : 'text-left';  
+            messageDiv.innerHTML = `  
+                <div class="inline-block p-3 rounded-lg ${sender === 'user' ? 'bg-blue-700 text-white' : 'bg-gray-200 text-gray-800'} shadow-md">  
+                    ${text}  
+                </div>  
+            `;  
+            chatContainer.appendChild(messageDiv);  
+            chatContainer.scrollTop = chatContainer.scrollHeight; // Auto-scroll to the bottom  
+        }  
 
-            // Function to send a message
-            async function sendMessage() {
-                const userMessage = userInput.value.trim();
-                if (!userMessage) return;
+        // Function to send a message  
+        async function sendMessage() {  
+            const userMessage = userInput.value.trim();  
+            if (!userMessage) return;  
 
-                // Add user message to chat
-                addMessage('user', userMessage);
-                userInput.value = '';
+            // Add user message to chat  
+            addMessage('user', userMessage);  
+            userInput.value = '';  
 
-                // Call the backend API
-                try {
-                    const response = await fetch(API_URL, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${API_KEY}` // 使用 API 密钥
-                        },
-                        body: JSON.stringify({ message: userMessage })
-                    });
+            // Call the backend API  
+            try {  
+                const response = await fetch(API_PROXY_URL, {  
+                    method: 'POST',  
+                    headers: { 'Content-Type': 'application/json' },  
+                    body: JSON.stringify({ message: userMessage })  
+                });  
 
-                    if (!response.ok) {
-                        throw new Error('API 请求失败');
-                    }
+                if (!response.ok) {  
+                    throw new Error('API 请求失败');  
+                }  
 
-                    const data = await response.json();
-                    addMessage('ai', data.reply); // 显示模型的回复
-                } catch (error) {
-                    console.error('Error:', error);
-                    addMessage('ai', '错误：无法连接到服务器。');
-                }
-            }
+                const data = await response.json();  
+                addMessage('ai', data.reply); // 显示模型的回复  
+            } catch (error) {  
+                console.error('Error:', error);  
+                addMessage('ai', '错误：无法连接到服务器。');  
+            }  
+        }  
 
-            // Event listener for the send button
-            sendBtn.addEventListener('click', sendMessage);
+        // Event listener for the send button  
+        sendBtn.addEventListener('click', sendMessage);  
 
-            // Allow pressing Enter to send a message
-            userInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') sendMessage();
-            });
-        </script>
-    </body>
-    </html>
+        // Allow pressing Enter to send a message  
+        userInput.addEventListener('keypress', (e) => {  
+            if (e.key === 'Enter') sendMessage();  
+        });  
+    </script>  
+</body>  
+</html>
